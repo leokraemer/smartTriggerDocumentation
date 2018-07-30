@@ -1,0 +1,704 @@
+\documentclass[a4paper]{report}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{bigstrut}
+\usepackage{multicol}
+\usepackage[]{graphicx}
+\usepackage{microtype}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[hyphens]{url}
+\usepackage[]{color}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\usepackage[]{todonotes}
+\usepackage{changepage}
+\usepackage[nottoc,numbib]{tocbibind}
+\usepackage{changepage}
+\usepackage{epstopdf}
+\usepackage{array}
+\usepackage{colortbl}
+\usepackage{multirow}
+\usepackage{fancyhdr}
+%\pagestyle{fancy}
+\pagestyle{plain}
+\usepackage{longtable}
+\usepackage{fancyvrb}
+\usepackage{floatpag}
+\floatpagestyle{plain}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
+
+%%%%%%%%%%%%% TABLES %%%%%%%%%%%%%%
+
+
+\usepackage{tabularx,ragged2e}
+\usepackage{booktabs}
+\renewcommand{\arraystretch}{1.2}
+
+
+%%%%%%%%%%%%% TABLES %%%%%%%%%%%%%%
+
+\usepackage{array}
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
+
+\usepackage[colorlinks=true, pdfborder={0 0 0}, allcolors=., linkcolor=., urlcolor=MidnightBlue, citecolor=DarkRed]{hyperref}
+\usepackage[all]{hypcap}
+\usepackage{caption}
+\usepackage[section]{placeins}
+\usepackage[]{eurosym}
+\usepackage{xparse}
+\usepackage{afterpage}
+\usepackage{titlesec}
+\usepackage[anythingbreaks,hyphenbreaks]{breakurl}
+\hyphenation{smart-phone}
+\titleformat{\chapter}[hang] 
+{\normalfont\huge\bfseries}{\thechapter}{1em}{}
+
+% footnoteLink command: Inserts a footnote leading to a website
+% Params:
+% #1 (mandatory): The url to link to
+% #2 (mandatory): The name of the link (the label)
+% #3 (optional): The date of access or \today if not supplied
+
+\NewDocumentCommand\FootnoteLink{m m o}{\IfNoValueTF{#3}{\footnote{\raggedright\href{#1}{#2} - \url{#1} - Online \today}}{\footnote{\raggedright\href{#1}{#2} - \url{#1} - online #3}}}
+
+\newcommand{\imagewidth}{\textwidth}
+\newcommand{\imageheight}{0.45\textheight}
+\NewDocumentCommand\Quelle{m o}{%
+\IfNoValueTF{#2}{Source: \url{#1}}%
+{Source: \href{#1}{#2}}%
+}%
+
+\newcommand\mybox[1][black]{
+							\textcolor{#1}{\rule{1em}{1em}}}
+
+%\usepackage[]{biblatex-chicago}
+\usepackage[backend=biber, maxbibnames=50, pagetracker=true, maxcitenames=1, style=authoryear-comp]{biblatex}
+\DeclareLanguageMapping{german}{german-apa}
+\setlength{\belowcaptionskip}{-10pt}
+\setlength{\intextsep}{12pt plus 2pt minus 0pt} 
+\addbibresource{thesis.bib}
+
+\newcommand{\black}[1]
+{
+\textcolor{black}{#1}
+}
+\newcommand{\red}[1]
+{
+\textcolor{red}{#1}
+}
+\newcommand{\blue}[1]
+{
+\textcolor{blue}{#1}
+}
+\newcommand{\green}[1]
+{
+\textcolor{green}{#1}
+}
+\newcommand{\darkRed}[1]
+{
+\textcolor{dRed}{#1}
+}
+\newcommand{\darkBlue}[1]
+{
+\textcolor{dBlue}{#1}
+}
+\newcommand{\darkGreen}[1]
+{
+\textcolor{dGreen}{#1}
+}
+\newcommand{\darkYellow}[1]
+{
+\textcolor{dYellow}{#1}
+}
+\newcommand{\yellow}[1]
+{
+\textcolor{yellow}{#1}
+}
+\newcommand{\CS}{C\nolinebreak\hspace{-.05em}\raisebox{.6ex}{\scriptsize\bf \#}}
+\def\f{\hspace{-0.3cm}\tflash\hspace{-0.2cm}}
+\def\c{\hspace*{-0.2cm}\correct\hspace*{-0.4cm}}
+
+%\newcommand{\mpage}[2]{ 
+%	\begin{minipage}{#2\imagewidth}
+%		#1
+%	\end{minipage}
+%}
+
+\newcounter{Feature}
+\setcounter{Feature}{0}
+\newcommand{\Feature}{%
+  \stepcounter{Feature}%
+  \theFeature
+}
+
+\begin{document}
+\input{title.tex}
+\newpage \ \pagestyle{empty}
+\newpage \pagestyle{empty}
+
+\setcounter{tocdepth}{1}
+\begin{abstract} 
+Just-in-time adaptive interventions (JITAI) promise great potential as tool for behaviour change interventions. It has been shown that users know when they need a reminder to reach their goal. This is reflected in the ability of current systems to let users decide on a point in time for the reminder. But user behaviour is often random and does not always line up with the set times. Therefore we propose a more flexible approach that allows users to define more natural moments, like 'leaving work' or 'arriving at home'.
+Smartphones with their multitude of sensors, connectivity and computational capabilities are an ideal platform to sense the users context and to supply an intervention in the right moment. In this work we describe an Android application that enables users to define meaningful moments in a more natural way than points in time, by leverageing the smartphones sensors. Also we evaluate the technical capabilities of the app in an experiment.
+\end{abstract}
+\newpage \
+\newpage
+ \pagestyle{plain}
+ \tableofcontents\newpage
+
+%\begin{quote} "Die Informatik dient der Befreiung des Menschen von der Last eintöniger geistiger Tätigkeit." -- Friedrich Luwdig Bauer \end{quote}
+\chapter{Introduction}
+This work describes an app built to provide Just-in-time adaptive interventions (JITAI) in arbitrary moments trained by simple user interaction. Previous approaches used geofences for smoking interventions \parencite{Naughton2016} or propose static models, like eating recognition \parencite{Rahman2016} or location pattern recognition \parencite{Wang2016} to provide interventions. In contrast to that our novel approach uses an entirely dynamic model, that changes based on the user's response to the intervention. To accomplish prediction of appropriate moments for JITAI the systems uses all available sensors of the users smartphone and user interactions as input for a machine learning model. Our particular approach has two possibilities for user input, namely reactions to on-screen notifications and a home-screen widget to allow proactive input for meaningful moments. The model aims to maximize the positive user reactions to interventions.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\section{Concept - Meaningful Moment}
+
+The concept of meaningful moments for behaviour change interventions is derived from behaviour theory. In the Fogg Behaviour Model \parencite{Fogg2009} (cf. \autoref{bmat}) a meaningful moment would be the moment when a behaviour trigger induces the target behaviour. In short: 
+
+\begin{quote}
+  A meaningful moment is the moment where a behaviour change intervention is most likely to succeed.
+\end{quote}
+
+Designing for behaviour change is a complicated field situated between behavioural psychology, data analysis and user experience. This work focusses on the practical challenges in designing a smartphone app, to detect meaningful moments in users life. The challenges of this task are twofold: \emph{first} enabling users to define a meaningful moment intuitively in a way the computer can understand and \emph{second} to detect future moments like this.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.7\textwidth,keepaspectratio]{bilder/foggmodelwith}
+  \caption{\label{bmat} Representation of Fogg's behaviour model, explaining the components of ability, motivation and triggers by \cite{Fogg2009}.} 
+\end{figure}
+One example that highlights the challenges of creating meaningful behaviour change interventions is SmartAct. SmartAct\FootnoteLink{https://www.uni-konstanz.de/smartact/}{SmartAct} is an interdisciplinary project with the goal to achieve long term health behaviour changes using mobile technology like smartphones. The researchers aim to include people's different living conditions, like work and family, into the behaviour change interventions. One part of the project is the SmartJob-branch that researches mobile interventions to encourage better health-behaviour at the workplace. In a topical study the researchers of SmartJob evaluated the impact of mobile behaviour interventions at work on users life. The study had two main conditions. The first condition aimed to encourage a more healthy snacking behaviour, the second condition was designed to promote physical activity. All conditions had the same main flow with slightly different instructions and specific questionnaires. In the mobile application used for the study the users had to set a daily goal every morning. For this goal they then had to think about a situation, that could hinder them or be an opportunity to reach the goal and how to prevent, overcome or use said situation. As last step in the daily goal-setting process the users were asked to set a time, when they would like to receive a reassuring notification to help them reach their goal. We assume that the moment when the described situation occurs is the meaningful moment. In the study the users defined a wide range of moments:
+For the \emph{snacking}-condition (52 participants) out of 267 situations the most stated were "desire for sweets" (113), "being offered sweets" (27), "opportunity" (20) and "coffee break" (18). For the \emph{physical activity}-condition (45 participants) out of 325 situations the most prevalent were "arriving at home" (68), "having free time" (53), "good weather" (44) and  "finished work" (37). Some of these situations are simple i.e. "good weather" or "arriving at home", but "being offered sweets" or "coffee break" are intricate social situations, that are hard to detect automatically.
+
+As the example shows meaningful moments are very diverse and often not easily defined. \label{appdescription} Therefore we envision a meaningful moment detection app that is able to derive the moments from real-life situations. Similar to Q sense by \cite{Naughton2016} the user should input the situations by single button presses. The phone will gather data continuously and with the classified situations it will employ machine learning to build a model to detect meaningful moments when they occur to provide just-in-time interventions (JITAI). A short user-story how this is envisioned can be found in \autoref{paul}. The longer the app is used the more often the user will come into the situation for the meaningful moment and the more data is there for the machine learning to generate a better model, while keeping the user effort low. With in-situation machine learning the classifier will update in near real-time. \\
+
+The main features of the app are:
+\begin{itemize}
+  \item Smartphone gathers data continuously.
+  \item System notifies user when it thinks it is a good moment (in the beginning this is random).
+  \item User classifies moments, either by widget or by reacting to notifications.
+  \item System updates the model based on the user input.
+\end{itemize}
+
+To achieve user interaction without opening an app we will use home-screen widgets and notifications (both in \autoref{exui2}). Widgets are useful to display static information and to send small events to the app. Notifications are used to provide momentary information and also offer simple interactions with the user. Notifications and can be combined with sound and vibration to alert the user.\\
+
+\begin{figure}[h]
+  \includegraphics[width=\textwidth]{bilder/userstory5}
+  \captionsetup{singlelinecheck=off}
+  \caption[User story explaining the concept of the app.]{\label{paul}
+    \begin{enumerate}
+      \item User Paul has trouble sleeping and wants to reduce caffeine intake after 4 pm. He sets up a reminder not to drink coffee in the meaningful moments reminder app for "No coffee after 4pm".
+      \item The app instructs Paul to log every cup of coffee he drinks by pressing the "now"-button.
+      \item Paul logs every coffee by pressing the button. The app records the event and uses the data to learn what "drinking coffee" means.
+      \item After some time the app is able to detect drinking coffee and reminds Paul about his goal, when it is after 4 pm.
+      \item With help of the app Paul overcame the caffeine issue and is able to sleep.
+    \end{enumerate}%
+  }
+\end{figure}
+\section{Structure of this Work}
+
+
+\chapter{Requirements}\label{requirements}
+In this section we introduce the requirements for a just-in-time adaptive intervention application (JITAI) as described by \cite{spruijt2014dynamic}. The requirements are derived from the works of \cite{wendel2013} and \cite{Poole2013}, that give an overview over the challenges of designing for behaviour change and mHealth interventions. We will evaluate the specific design choices of our system at the end of the paper.
+Common problems of mHealth interventions that reduce the effect of mHealth applications are \parencite{Poole2013}: 
+\begin{itemize}
+  \item low retention rate
+  \item cannot sustain user interest
+  \item many applications rely on self-monitoring, thus when the monitoring stops the app is useless and the user relapses
+  \item applications lack effective feedback loops
+\end{itemize}
+To address these problems we compiled the following requirements, based on \cite{wendel2013}:
+\paragraph{Effectiveness} Most of all the intervention must be effective in changing the user behaviour. This means that the change is noticeable soon and over time the user develops the ability to maintain the new behaviour. This also means that the user must perceive the system as effective.
+\paragraph{Reach} For just-in-time interventions the system must have the means to reach the user at any appropriate time. 
+\paragraph{Always on} To supply just-in-time interventions at the appropriate time it is mandatory that the application is always-on and ready to interact with the user. Always-on is also necessary for continuous monitoring of user behaviour. Possible down times are when the user is sleeping, or otherwise not in a situation that fits the behaviour change intervention.
+\paragraph{Usability} The intervention system must have a high usability so that the user can easily and with low effort use the application. This prevents drop-out due to inability to use the application properly.
+\paragraph{Validity} To measure the effect of the intervention the users behaviour must be tracked continuously and objectively.
+\paragraph{Accuracy} The time and the content of a just-in-time intervention must accurately fit the situation. Therefore, it is necessary that the application builds on a sound behaviour theory and tested behaviour change intervention framework.
+\paragraph{Safety} The application must be safe to operate and not distract the user in dangerous or otherwise unfitting situations. For example, while driving or in a meeting.
+\paragraph{Security} Just-in-time interventions require much sensitive knowledge about the user and his behaviour. The user trusts the application to act on his behalf, this is especially true if a trusted medical professional suggests the app. Therefore, the application must keep the users data safe.
+\chapter{Implementation}\label{chap:implementation}
+This chapter outlines the implementation details of the meaningful moments detection app. In the app the user is able to define a goal and a message that he wants to receive at the meaningful moment. Entering the meaningful moment into the app is done as described in section \ref{appdescription}. We modelled our app similar to the Behavioural Intervention Technology Framework by \cite{mohr2014behavioral} (cf. \autoref{bitmodel}). Accordingly we divided the code into three modules: \texttt{DataCollection} (sense), \texttt{Jitai} (plan) and \texttt{Ui} (act). See figure \ref{mmdappsimple} for an overview of the main components and figure \ref{mmdapp} for a complete overview of all components and their interactions. The \texttt{Ui}-module handles the communication with the user. The \texttt{Jitai}-module uses the data provided by the \texttt{DataCollectorService} to trigger notifications. The \texttt{DataCollection}-module handles data-collection from the sensors and stores it in the central database. 
+
+The app is implemented in Java and Kotlin and runs on Android smartphones with API-level 21 (Lollipop) and higher.
+
+\begin{figure}[hb]
+  \includegraphics[width=\textwidth,keepaspectratio]{bilder/bit}
+  \caption{Depiction of the Behavioural Intervention Technology Framework by  \cite{mohr2014behavioral}. \label{bitmodel}}
+\end{figure}
+
+\begin{figure}
+  \thisfloatpagestyle{plain}
+  \vspace{-2cm}
+  \makebox[\textwidth][c]{
+    \includegraphics[width=1.2\textwidth,keepaspectratio]{bilder/superchart}}
+  \caption{Conceptual overview of the main components of the meaningful moments detection app. The app is structured in three modules: DataCollection (sense), Jitai (plan) and UI (act). Arrows indicate how data and events flow through the app.\label{mmdappsimple}}
+\end{figure}
+
+%\section{System Concept Statement}
+%The system provides reminders to users to increase physical activity. The app measures physical activity by step count and the amount of time spent sedentary. In the app the user can set a specific amount of steps and maximum amount of sedentary behaviour. With the goal in mind the user can set natural reminders e.g. "when I leave work" or "when arriving at home" for actions that increase physical activity e.g. "walk to work" or "taking a short walk". The app will then provide the reminder at the defined moment.
+
+%The system provides a simple way for the user to define meaningful moments and to enter them into the system in a way so that they can be detected reproducibly with high accuracy and few false positives. The main focus of this system is a home or office scenario where location based reminders are unreliable.
+%The system should update continuously based on user input. 
+
+\section{DataCollection Module}
+The \texttt{DataCollection}-module handles gathering sensor data (cf. \autoref{sensors}) from on-phone sensors and network sensors. 
+\subsection{Sensors}\label{sensors}
+The android framework supports a wide range of sensors of which some are standard (like accelerometer, compass and wifi), some are present in most devices (like gyroscope and light sensor) and some are only in a few different models (like barometric pressure sensor or ambient thermometer). \autoref{sensorpower} lists the available sensors, their typical power draw and the sampling frequency that is used in the meaningful moment detection app. In the app we use three distinct sampling frequencies. 50 Hz for sensors that  provide real-time information, 0.2 Hz or every 5 seconds for sensors with lower time resolution and every 30 minutes for weather.
+%As first step to engineer features with high meaningfulness we have to look at the available sensors. We evaluate the sensors by:
+%\begin{itemize} 
+%  \item Usefulness for the classifier (i.e. information gain)
+%  \item if they measure similar data as other sensors
+%  \item how much the measurements relate to the actual user behaviour compared to how likely the sensor behaviour measures interaction with the fingerprint app
+%  \item resolution of the sensor values
+%  \item power consumption
+%\end{itemize}
+%In this work the analysis of the sensors qualities is preliminary and should inform the design of the test application. A larger study is needed to make general statements. \\
+\begin{table}[]
+  \begin{adjustwidth}{-3cm}{-3cm}  
+    \begin{tabularx}{1.5\textwidth}{lXlcl}
+      
+      sensor & sensor values & unit & mA & frequency\\ \midrule
+      accelerometer$^1$ & 3D-linear acceleration & m/s$^2$& 0.25 & 50 Hz \\
+      linear acceleration$^2$ & 3D-linear acceleration, gravity signal filtered out& m/s$^2$ & 6.0& 50 Hz \\
+      gravity$^2$ & 3D-linear acceleration, gravity signal & m/s$^2$& 6.0& 50 Hz \\
+      gyroscope$^1$ & 3D-angular rotation & rad/s & 6.1 & 50 Hz\\
+      magnetometer$^1$ & 3D-magnetic field & µT & 6.0& 50 Hz \\
+      orientation sensor$^2$ & orientation relative to earth (fused signal of accelerometer, gyroscope and magnetometer) &  & 6.0& 50 Hz\\
+      light sensor$^1$ & absolute brightness & lux & 0.75 & 50 Hz\\
+      pressure$^1$ & barometric pressure & hPa & 1.0& 50 Hz\\
+      proximity$^1$ & proximity of the screen to any object & cm & 0.75& 50 Hz\\
+      significant motion$^2$ & signals when the device has changed its location & & 0.3 & -$^4$\\
+      step detect$^2$ & signal when a step is detected & step & 0.3 & -$^4$\\
+      step count$^2$ & step count since last power on & steps & 0.3& 0.2 Hz \\
+      ambient noise level$^2$ & max. noise level & dB & -$^3$ & 0.2 Hz \\
+      wifi state$^1$ & signal strength of surrounding wifi networks & dB & -$^3$ & 0.2 Hz\\
+      fused location$^2$ & device location with ca. 10m accuracy & lat/long & 7.5\%& 0.2 Hz\\
+      recognized activity$^2$ & one of 10 activities (cf. \ref{activities}) & \%&-$^3$& 0.2 Hz\\
+      screen state$^2$ & on or off &  &-$^3$& 0.2 Hz\\
+      weather$^2$ & weather as provided by the weather service &  &  -$^3$ & 30 min\\
+    \end{tabularx}
+    \caption{\label{sensorpower}Overview of typical sensors of android smartphones. $^1$hardware sensor, $^2$software sensor, $^3$not measurable, $^4$ event driven sensor, \Quelle{https://source.android.com/devices/sensors/sensor-types}, \Quelle{https://youtu.be/URcVZybzMUI} and  \Quelle{https://developer.android.com/reference/android/hardware/Sensor.html}}
+  \end{adjustwidth}
+\end{table}
+%
+Note that the power consumption is an estimate and varies between devices. Some sensors can either be implemented in hardware or in software. Hardware sensors generally have a lower power draw. The provided power draw values can be considered typical.
+
+We limited all sensors to maximum 50 Hz polling rate, because this polling rate is commonly supported, high enough for activity recognition and provides smooth timestamps. Higher sampling rates put additional stress on the system, use more power and have unstable polling rates.
+
+\subsection{Datacollection Service}\label{datacollector}
+This service is one of the main components of the app. It acts as the pacemaker of the app by waking up every 5 seconds to collect the data from the sensors and store it in the database. It also handles turning the sensors on or off and passing new sensor data to the \texttt{Jitai} component. With the datacollection service we fulfil the always-on requirement.
+\subsection{Database} A single database is used as storage for all data. The database handles concurrent entering and manipulation of data. 
+We decided to use a \texttt{Sqlite3} database, which is built into android and provides efficient, persistent data storage with an SQL interface. Compared to a file-based approach this provides the ability to query the data efficiently. The database is also easily synchronizable with a remote server, e.g. by SymmetricDS \FootnoteLink{www.symmetricds.org}{SymmetricDs}.
+\section{Jitai Module}
+
+The \texttt{Jitai} module handles the meaningful moment detection. For every goal the user creates a new \texttt{Jitai}. Every 5 seconds each \texttt{Jitai}-object gets sensor data from the \texttt{DataCollectionService} and uses this data to detect the meaningful moment. The detection can be either by simple rules on sensor data changes called Triggers (described in the next \autoref{trigger}) or by a machine learning model (cf. \autoref{chap:machinelearning}). If a meaningful moment is detected the \texttt{Jitai} calls the \texttt{NotificationService} to issue a notification to the user. The \texttt{Jitai}-objects also store the information what message should be send to the user in the moment.
+\subsection{Trigger}\label{trigger}
+Triggers allow the detection of a meaningful moment situation by one or more manually set sensor value thresholds. At runtime the sensor data is constantly compared to the thresholds. When all thresholds are exceeded the meaningful moment is reached \texttt{UI} should notify the user. For an overview of all triggers see \autoref{triggerfig}. The correct function of the triggers is ensured by \texttt{JUnit}-tests.
+\paragraph{TimeTrigger} The \texttt{TimeTrigger} fires when the current time is within the specified range and the  day matches the set value.
+\paragraph{GeofenceTrigger} The \texttt{GeofenceTrigger} triggers when a certain geofence is either entered or exited. This trigger is a stateful trigger, that supports triggering only after a list of geofences has been entered and exited.
+\paragraph{3DTrigger} The \texttt{3DTrigger} compares the constant stream of real-time data with a recorded sample. The comparison is done with classical Dynamic Time Warping (DTW) cf. \cite{muller2007dynamic}. A suitable threshold must be provided. The \texttt{3DTrigger} works on data from the accelerometer, gyroscope, magnetometer and orientation sensor.
+\paragraph{Activity Trigger} The \texttt{ActivityTrigger} triggers when a certain activity is reported by the Google Activity recognition API\FootnoteLink{https://developers.google.com/android/reference/com/google/android/gms/location/ActivityRecognitionApi}{Google Activity recognition API}.
+\paragraph{Asking Trigger} The \texttt{AskingTrigger} posts a notification to the user and triggers based on the reaction. This can be used to check conditions that the phones sensors can not capture.
+\paragraph{Height Trigger} The \texttt{HeightTrigger} triggers based on the values the barometer provides. There are two modi, that triggers when either a certain positive or negative height difference is reached.
+\paragraph{Light Trigger} The \texttt{LightTrigger} triggers based on the values the ambient light sensor provides. There are two modi, that trigger when either a certain positive or negative ambient light level difference is reached.
+\paragraph{Sound Trigger} The \texttt{SoundTrigger} triggers based on the values the ambient sound sensor delivers. There are two modi, that trigger when either a certain positive or negative decibel level difference is reached.
+\paragraph{Steps Trigger} The \texttt{StepsTrigger} triggers based on the values the step count sensor delivers. There are two modi, that trigger when either the number of steps in the specified interval is lower than expected or higher than expected.
+\paragraph{Proximity Trigger} The \texttt{ProximityTrigger} can be set so that it reports true when the proximity sensor reports either near or far.
+\paragraph{Screen State Trigger} The \texttt{ScreenStateTrigger}  can be set so that it reports true when the display is either on or off.
+\paragraph{Weather Trigger} The \texttt{WeatherTrigger} fires either at good weather or bad weather. Good weather is weather without rain or snow.
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\textwidth]{bilder/trigger}
+  \caption{The various triggers that can be chained together to define a meaningful moment situation. \label{triggerfig}}
+\end{figure}
+\subsection{Machine Learning}
+For the machine learning the \texttt{Jitai}-object requests data from the Database through the \texttt{InstanceCreator} (cf. \autoref{mmdapp}). The \texttt{InstanceCreator} brings the data into the correct format for the classifier to train and caches data it has already processed for updates. The classifier is updated or re-trained when a sufficient amount of new data was entered. For further details about the features and the evaluated classifiers see \autoref{chap:machinelearning}.
+\section{UI Module}\label{ui}
+\begin{figure}
+  \vspace{-2.5cm}
+   \thisfloatpagestyle{plain}
+  \makebox[\textwidth][c]{
+    \centering
+    \includegraphics[width=1.4\textwidth]{bilder/jitaiapp_full_rahmen}%
+  }
+  \captionsetup{singlelinecheck=off}
+  \caption[The five main screens of the app.]{\label{appui}
+    1. Main screen of the app. %
+    2. Screen to activate, deactivate, add and delete Jitai. %
+    3. Add Jitai screen. %
+    4. Add geofence screen. %
+    5. DataCollector management screen.%
+  }%
+\end{figure}
+%\begin{figure}
+%  \centering
+%  \includegraphics[width=0.5\textwidth]{bilder/jitaiui}
+%  \caption{A simple user interface used to create a new Jitai. The user has to think about a goal, a situation (meaningful moment) for a reminder and a meaningful message. Also he can select a location, a time and day and weather. \label{exui}}
+%\end{figure}
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\textwidth]{bilder/experimentui}
+  \caption{The user interface for the meaningful moment detection app. \\1: A notification showing the goal and the message as specified in the Jitai. It also provides buttons to classify if the moment the notification was sent in was \emph{correct} (Korrekt) or \emph{false} (Falsch). \\2: The home-screen widget offering the possibility to enter that the meaningful moment is \emph{now} (Jetzt). If there are more than one active \texttt{Jitai} the widget shows a list. \label{exui2}}
+\end{figure}
+The main user interface is a standard android app. It consists of a \texttt{Jitai}-creation-, a \texttt{Jitai}-management-, a \texttt{Geofence}-creation- and a \texttt{DataCollector}-management-activity.
+
+To provide an easy method to classify events the app provides a home-screen widget (see 2 in \autoref{exui2}). To notify the user of a meaningful moment we use the android notification framework to provide notifications with sound and vibration. Every notification also has two buttons allowing the classification of the notification as correct or false (see 1 in \autoref{exui2}).
+The notifications are handled by the \texttt{NotificationIntentService} and the Widget communicates with the \texttt{DataCollectorService} to enter the user events into the database.\\ 
+
+
+\chapter{Conclusion, Future Work}\label{chap:conclusion}
+This chapter summarises the lessons learned and draws the final conclusion. Afterwards we provide a short look on the future direction of our work.
+\paragraph{Rate limiting} From the users perspective it can be very annoying to receive many notifications for the same thing in a short time. Therefore for short meaningful moments that can occur frequently, like passing a certain location, there should be a mechanism of rate limiting after an initial period.
+\section{Summary and Discussion}
+
+\section{Future Work}
+
+%\begin{figure}
+%  \begin{minipage}{0.49\textwidth}
+%  \includegraphics[height=0.49\textheight]{bilder/reminder}
+% \end{minipage}
+%\raggedleft
+% \begin{minipage}{0.49\textwidth}
+%  \includegraphics[height=0.49\textheight]{bilder/situation}
+%\end{minipage}
+%\raggedright
+% \begin{minipage}{0.49\textwidth}
+%  \includegraphics[height=0.49\textheight]{bilder/location}
+%\end{minipage}
+%\raggedleft
+% \begin{minipage}{0.49\textwidth}
+% \includegraphics[height=0.49\textheight]{bilder/time}
+%\end{minipage}
+%\caption{Screenshots of the new app, supporting time, location and activity as triggers for behaviour change interventions in meaningful moments.\label{future}}
+%\end{figure}
+
+
+\newpage
+\chapter{Appendix}
+\begin{figure}[h]
+  \thisfloatpagestyle{empty}
+  \vspace{-2cm}
+  \makebox[\textwidth][c]{
+  \centering
+    \includegraphics[width=1.4\textwidth,keepaspectratio]{bilder/mmhierachical}}
+  \caption{Overview of the main components of the meaningful moments detection app. The app is structured in three modules: Ui, Jitai and DataCollection. Arrows indicate the direction of the components interaction.\label{mmdapp}}
+\end{figure}
+\ \\
+\begin{huge}
+\textbf{Icon Attribution}
+\end{huge}\\ \ \\
+%Reminder icon by Sergey Demushkin \url{https://thenounproject.com/term/reminder/176751/}\\
+Icons in \autoref{mmdappsimple}:\\
+Tree and Cellphone icon made by Freepik\FootnoteLink{http://www.freepik.com/}{freepik} from \url{www.flaticon.com}, Licence: Creative Commons BY 3.0\\
+Road  icons made by \url{https://www.flaticon.com/authors/graphicsbay} from \url{www.flaticon.com} is licensed by Creative Commons BY 3.0\\
+Smartphone icon made by Smashicons from \url{www.flaticon.com} is licensed by Creative Commons BY 3.0\\
+Database icon made by Elegant Themes from \url{www.flaticon.com} is licensed by Creative Commons BY 3.0\\
+Artificial Intelligence by Krisztián Mátyás from the Noun Project \url{https://thenounproject.com}\\
+Cogs by Darin S from the Noun Project \url{https://thenounproject.com}
+\listoffigures
+\listoftables
+\printbibliography 
+%\section{Long Tables}
+%\begingroup
+%\setlength{\LTleft}{-20cm plus -1fill}
+%\setlength{\LTright}{\LTleft}
+%\begin{longtable}{llll}
+%  \toprule
+%  Information gain & Data-point & Feature \# & Feature name \\\midrule
+%  \endfirsthead
+%  \multicolumn{3}{c}%
+%  {{\bfseries \tablename\ \thetable{} -- continued from previous page}} \\\toprule
+%  information gain & data-point & feature \# & name \\\midrule
+%  \endhead
+%  \bottomrule \multicolumn{3}{c}{{Continued on next page}} \\ 
+%  \endfoot
+%  
+%  \endlastfoot
+%  0.26292 & 0 & 44 & peakLightValue \\
+%  0.1878 & 3 & 251 & wifi\_signal\_strength\_2 \\
+%  0.18215 & 4 & 306 & meanLightValue \\
+%  0.16472 & 4 & 304 & peakLightValue \\
+%  0.15717 & 5 & 371 & meanLightValue \\
+%  0.14444 & 0 & 46 & meanLightValue \\
+%  0.12665 & 5 & 369 & peakLightValue \\
+%  0.12358 & 3 & 250 & wifi\_signal\_strength\_1 \\
+%  0.12309 & 1 & 111 & meanLightValue \\
+%  0.11949 & 6 & 434 & peakLightValue \\
+%  0.11575 & 5 & 381 & wifi\_signal\_strength\_2 \\
+%  0.11545 & 0 & 45 & minLightValue \\
+%  0.10963 & 5 & 370 & minLightValue \\
+%  0.10749 & 1 & 95 & MAG\_PeakAmplitude \\
+%  0.10036 & 4 & 316 & wifi\_signal\_strength\_2 \\
+%  0.0963 & 6 & 435 & minLightValue \\
+%  0.0858 & 0 & 30 & MAG\_PeakAmplitude \\
+%  0.07734 & 4 & 325 & connected\_wifi \\
+%  0.07471 & 2 & 186 & wifi\_signal\_strength\_2 \\
+%  0.07191 & 2 & 169 & mag\_ratio\_between\_p1\_and\_total\_power \\
+%  0.06919 & 1 & 114 & detected\_activity \\
+%  0.06637 & 1 & 96 & MAG\_MeanAmplitude \\
+%  0.06628 & 2 & 161 & MAG\_MeanAmplitude \\
+%  0.0626 & 0 & 31 & MAG\_MeanAmplitude \\
+%  0.06111 & 2 & 163 & mag\_power\_of\_dominant\_frequency \\
+%  0.06029 & 2 & 142 & second\_dominant\_frequency \\
+%  0.05887 & 2 & 147 & ratio\_between\_p1\_and\_total\_power \\
+%  0.05855 & 2 & 141 & power\_of\_dominant\_frequency \\
+%  0.05764 & 6 & 439 & detected\_activity \\
+%  0.05633 & 3 & 203 & accPeakAmplitude \\
+%  0.05204 & 3 & 204 & accMeanAmplitude \\
+%  0.05165 & 2 & 168 & mag\_total\_power \\
+%  0.05086 & 3 & 211 & total\_power \\
+%  0.04952 & 2 & 146 & total\_power \\
+%  0.04897 & 0 & 38 & mag\_total\_power \\
+%  0.04845 & 2 & 139 & accMeanAmplitude \\
+%  0.04772 & 3 & 208 & power\_of\_second\_dominant\_frequency \\
+%  0.0461 & 1 & 82 & ratio\_between\_p1\_and\_total\_power \\
+%  0.04486 & 3 & 222 & gyro\_total\_power \\
+%  0.04312 & 2 & 138 & accPeakAmplitude \\
+%  0.04312 & 2 & 143 & power\_of\_second\_dominant\_frequency \\
+%  0.04271 & 2 & 149 & GYRO\_PeakAmplitude \\
+%  0.04257 & 1 & 103 & mag\_total\_power \\
+%  0.04199 & 0 & 65 & connected\_wifi \\
+%  0.04021 & 2 & 150 & GYRO\_MeanAmplitude \\
+%  0.04021 & 2 & 152 & gyro\_power\_of\_dominant\_frequency \\
+%  0.04009 & 3 & 217 & gyro\_power\_of\_dominant\_frequency \\
+%  0.04009 & 3 & 215 & GYRO\_MeanAmplitude \\
+%  0.04009 & 3 & 214 & GYRO\_PeakAmplitude \\
+%  0.0385 & 2 & 145 & power\_of\_dominant\_frequency\_625 \\
+%  0.03728 & 4 & 309 & detected\_activity \\
+%  0.03673 & 1 & 90 & gyro\_dominant\_frequency\_625 \\
+%  0.03607 & 2 & 156 & gyro\_power\_of\_dominant\_frequency\_625 \\
+%  0.03607 & 2 & 157 & gyro\_total\_power \\
+%  0.03564 & 3 & 220 & gyro\_dominant\_frequency\_625 \\
+%  0.03564 & 3 & 221 & gyro\_power\_of\_dominant\_frequency\_625 \\
+%  0.03519 & 2 & 179 & detected\_activity \\
+%  0.03493 & 5 & 374 & detected\_activity \\
+%  0.03489 & 3 & 206 & power\_of\_dominant\_frequency \\
+%  0.03449 & 1 & 98 & mag\_power\_of\_dominant\_frequency \\
+%  0.03444 & 1 & 130 & connected\_wifi \\
+%  0.03432 & 0 & 49 & detected\_activity \\
+%  0.03325 & 3 & 209 & dominant\_frequency\_625 \\
+%  0.03316 & 3 & 260 & connected\_wifi \\
+%  0.03215 & 2 & 155 & gyro\_dominant\_frequency\_625 \\
+%  0.03198 & 6 & 400 & dominant\_frequency \\
+%  0.03021 & 4 & 277 & ratio\_between\_p1\_and\_total\_power \\
+%  0.03021 & 6 & 427 & mag\_power\_of\_dominant\_frequency\_625 \\
+%  0.02937 & 2 & 140 & dominant\_frequency \\
+%  0.02887 & 5 & 362 & mag\_power\_of\_dominant\_frequency\_625 \\
+%  0.02876 & 0 & 25 & gyro\_dominant\_frequency\_625 \\
+%  0.02807 & 0 & 14 & dominant\_frequency\_625 \\
+%  0.0273 & 6 & 407 & ratio\_between\_p1\_and\_total\_power \\
+%  0.02716 & 2 & 195 & connected\_wifi \\
+%  0.02696 & 2 & 144 & dominant\_frequency\_625 \\
+%  0.02352 & 6 & 455 & connected\_wifi \\
+%  0.02302 & 5 & 390 & connected\_wifi \\
+%  0.01928 & 0 & 51 & detected\_activity\_2 \\
+%  0.01877 & 7 & 520 & connected\_wifi \\
+%  0.01869 & 1 & 118 & detected\_activity\_3 \\
+%  0.01843 & 6 & 443 & detected\_activity\_3 \\
+%  0.0172 & 7 & 504 & detected\_activity \\
+%  0.01611 & 7 & 506 & detected\_activity\_2 \\
+%  0.0159 & 2 & 181 & detected\_activity\_2 \\
+%  0.01581 & 3 & 244 & detected\_activity \\
+%  0.01442 & 7 & 508 & detected\_activity\_3 \\
+%  0.01323 & 0 & 53 & detected\_activity\_3 \\
+%  0.01295 & 4 & 296 & mag\_dominant\_frequency\_625 \\
+%  0.01108 & 5 & 376 & detected\_activity\_2 \\
+%  0.01094 & 5 & 378 & detected\_activity\_3 \\
+%  0.00881 & 7 & 491 & mag\_dominant\_frequency\_625 \\
+%  0.00842 & 4 & 313 & detected\_activity\_3 \\
+%  0.00765 & 3 & 246 & detected\_activity\_2 \\
+%  0.00733 & 1 & 116 & detected\_activity\_2 \\
+%  0.00549 & 3 & 248 & detected\_activity\_3 \\
+%  0.00359 & 2 & 183 & detected\_activity\_3 \\
+%  0.00324 & 6 & 441 & detected\_activity\_2 \\
+%  0.00109 & 4 & 311 & detected\_activity\_2\\ \bottomrule
+%  \caption{98 Features from \textbf{open fridge} 109 instances, window size 40s, ranked by Information Gain. 422 Features with information gain\protect\footnotemark $< 0.001$ are omitted. \label{tab:infogain}}
+%  \footnotetext{\href{https://en.wikipedia.org/wiki/Information\_gain\_in\_decision\_trees}{Information Gain} - \url{https://en.wikipedia.org/wiki/Information\_gain\_in\_decision\_trees} - Online \today}
+%\end{longtable}
+%\endgroup
+\end{document}
+interesting:
+https://dev.theneura.com/api-reference/behavior-predictions/
+https://dev.theneura.com/api-reference/situations-and-moments/
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+\section{Behaviour Change Design Principles}
+This section covers the special design principles for effective behaviour change interventions. Because mHealth applications differ from normal applications in the aspect, that they are much more personal and failure might result in injury the requirements are higher than normal.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Persuasive Technology}
+In his book Persuasive Technology \cite{fogg2002persuasive} illustrates how technology can be used to persuade people to do actions that benefit the creator of an application. While this is not the purpose of mHealth applications, where the user benefits, most of the techniques and principles can be applied in both contexts. This section highlights the key factors of persuasive design applicable in behaviour change.
+\paragraph{Kairos} in greek mythology, is the "god of the favourable moment". In persuasive technology the term stands for the right moment to persuade someone and the key point of what Fogg defines as \emph{suggestion technology}. Suggestion technology uses the right moment to suggest something to the user, e.g. traffic signs that show the actual speed of the approaching car and a smiling or frowning face, depending weather or not the limit is complied with or not. Making a suggestion at an opportune moment does not necessarily spawn immediate action, but the right moment makes the persuasive argument stronger. These moments are for example when a user is in a good mood, when they have the chance to act immediately, when they have just received a favour and want to repay it or when they want to make up for a mistake they made. To determine the opportune moment Fogg notes five crucial factors: your physical location, your typical routine, the time of day, your goals for the day, your current task.
+\paragraph{Real Time Tracking}
+Fogg notes that real time tracking allows users to understand their actions and makes it easier to understand how well they perform the target behaviour. Also the use of fitness trackers can be intrinsically motivating and feed the humans drive of self-understanding. Tracking technology can be used to track human behaviour in its widest sense. This can be an earpiece the pulse during a workout\ref{lg} or a pedometer to measure steps during the day. More sophisticated devices can track location, speech, social interaction\ref{monarca}, eating\ref{predict} or activities. Real time tracking can also be persuasive, for example when the tracking data is shared live with peers on social network. Also accurate tracking is the cornerstone of rewarding completed behaviour automatically and reliably.
+\paragraph{Persuasion through Simulation} is to use computer simulation to make users aware about the outcomes of different behaviours. For example, a cause-and-effect simulation for HIV prevention could let users explore the likelihood of an HIV infection from different sexual activities with varying types of partners. Also virtual environments can be used to let people face and overcome phobias\FootnoteLink{https://uploadvr.com/virtual-reality-helping-people-overcome-fears-phobias/}{Virtual Reality Could Help People Overcome Their Fears and Phobias} in a safe environment.
+\paragraph{Language}
+The language used when communicating with a user should generally be positive and, depending on the usecase formal or informal. Fogg found that especially praise has the effect, that users are in a better mood, feel better about themselves and find the interaction more engaging.
+\paragraph{Social Facilitation} is the phenomenon that people perform better when they work in a team. This effect is most prominently seen in sports, where the team members motivate each other to train harder and longer and become better. Although not empirically proven, this effect can also be leveraged without the immediate presence of others, through connected devices. For example, you could imagine an application where you would run with another runner that is half way across the country, but you are both tracked through your phones and a friendly voice keeps you up to date about the others speed and progress during the run.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\subsection{Ethics}
+Persuasive systems can change users behaviour \cite{fogg2002persuasive}. This power must not be misused in the sense that some applications might either be unethical, e.g. persuading children to buy in app purchases with false promises, or possibly harmful, e.g. a depression treatment without proper clinical supervision might cause a negative effect. Less critical are applications that promote healthy behaviour, e.g. stop smoking or drinking or promote physical activity.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Vision of a Wellness App}
+This section introduces "Promote Active Life 9000" (short PAL 9000 or PAL), a hypothetical, context sensitive, momentary intervention smartphone application for fitness and diet behaviour change. PAL is based on the PSD principles (see \autoref{PSD}). PAL 9000s goal is to nudge the user towards healthier behaviour by monitoring the user to provide guidance and concrete calls to action when possible. The application is thought out to use mechanisms for context sensing like Google Now and also features an sophisticated model of user behaviour and motivation. This way PAL \emph{knows} when a suggestion will be successful and when not.\\
+For our user centred design we consider the following persona desctibed in \autoref{sophietab}
+
+%\begin{table}
+%  \begin{minipage}{9cm}
+%    \begin{tabularx}{\textwidth}{lX}
+%      Name  & Sophie Müller \\
+%      Occupation & literature bachelor student\\
+%      Age & 21\\
+%      Relationship & single\\
+%      Living & Lives with her 2 roommates in the city\\
+%      Smartphone use & uses smartphone daily to communicate with friend via messenger and social networks.\\
+%      Computer use & uses her laptop to write essays, surf the web and watch series\\
+%      Body & has a few pounds extra\\
+%      State of mind & generally lazy, but open minded\\
+%      Hobbies & likes to cook and to eat\\
+%      & reading \\
+%      & online video\\
+%      Motivation & wants to become fit for summer\\
+%    \end{tabularx}
+%  \end{minipage}
+%  \begin{minipage}{3cm} \includegraphics[width=3cm]{bilder/sophie2}\\\FootnoteLink{https://tinyurl.com/y9htfp5b}{picture source}
+%  \end{minipage}
+%  \caption{\label{sophietab}The persona used to create PAL 9000}
+%\end{table}
+\paragraph{First Contact:}To become fit for the summer Sophie downloads the new personal fitness app "Promote active life - Pal 9000". She chose PAL, because the app promises long lasting effects with only a few simple tricks, has a high rating in the app store and also promises to keep all personal data on the phone itself. The app was also featured on online news and gadget sites and was appraised to be "change your life using machine learning". Although Sophie does not know much about machine learning she trusts the app, because it was developed by a university.
+\paragraph{Initialisation:}She downloads the app at home and first it congratulates her to the choice to change her life, gives a bit of general information information about the benefits of increased physical activity. Afterwards the app collects health related information, like age, weight and height about Sophie. Then it tells Sophie, that it will analyse her behaviour for one week and then start to give her personalized advice how to become fitter. Sophie is informed that during the baseline week she should just do what she normally does and the app will from time to time ask questions about her current activity. Sophie can chose to begin tracking now or set a date when it starts. Because she is tired she chooses to start tomorrow. Sophie is also informed that she can add additional devices, like wearable fitness trackers to increase the accuracy of the intelligent trainer. Sophie adds her heart rate and activity tracking wristband, that she has gotten as a present last Christmas, always wears, but never really cared about. PAL a healthy resting heart rate towards health goals and starts using the current heart rate for training.\\
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{bilder/learningandintervention}
+  \caption{\label{learnandintervene}The questions PAL asks during the learning phase (left). The status UI of PAL with the possibility to input more information about ons self (middle). And an example notification that triggers the user to take a short walk at an opportune moment (right).}%
+\end{figure} 
+\paragraph{Training}During the baseline week the app tracks Sophies behaviour and from time to time posts a notification like "Are you bored", "Are you at work" or "Are you eating right now". Sophie can answer the notifications with "yes", "no" or dismiss them with one click. When Sophie wants to check the progress the app gives a comprehensive overview and also offers the possibility for Sophie to classify more data manually. Sophie does her normal routine and is seldom disturbed by the app, because somehow it finds good moments for prompting classification. Sophie sometimes opens the app just to look at the progress and is amazed by the easily understandable visualisations of her heart rate and step count progression, which she never rally cared about before. Also she likes how PAL constructs a map of her "places" and she even helps to set the markers right on the map, where they were off. The insights about herself she gets from the app make her belief that PAL 9000 really smart.
+\paragraph{Planning and Goal Setting} After the baseline week the momentary intervention phase starts. The intelligent system analysed Sophies behaviour and helps her to set a realistic step count goal for the next week. Pal also notices that Sophie does no regular sports and suggests some sport options for Wednesday and Thursday evening, where Sophie had two hours of free time at home in the baseline week for exercise. Sophie chooses Yoga on Wednesday and decides to pass on Thursday. This ends the in app interaction for the morning and Pal wishes Sophie a good day and reminds her that from now PAL will show Sophie moments where she can take action to change her life.
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{bilder/sandyslocations}
+  \caption{\label{sandylocations}The locations after the training week (left). The changed locations after Sandy changed her behaviour (middle). A detail view of a location with a suggestion how to improve the behaviour (right).}%
+\end{figure} 
+\paragraph{Increase Step Count}On the way to the uni by bus Sophie is surprised when the app notifies her that "To get a head start on her step goal, she could get off the bus a station early and walk for 500m, equalling over 700 steps." Sophie agrees and is rewarded with a success message after the walk. 
+Over the course of the week this short walk becomes a small habit of Sophie. When Sophie sits in the uni and works on her assignments the system constantly evaluates her heart rate and activity. 
+\paragraph{Active Breaks}Within the first week Sophies work behaviour was analysed and early signs of upcoming breaks were extracted. With this information PAL becomes active when Sophie is about to have a break and suggests that she might do some light stretching workout in the break. Sophie is surprised about the good timing the app has, and since she needs some time from the desk anyway stretching is a good idea. She agrees and PAL walks her through fife minutes of exercise. During the rest of the day PAL recognizes several other breaks, but also a decrease in Sophies motivation and does not suggest other workouts, because of lacking motivation. 
+\begin{figure}
+  \centering
+  \includegraphics[width=4cm]{bilder/sophiefeedback}
+  \caption{\label{sophiefeedback}An interactive view of the sensor data collected by PAL 9000.}%
+\end{figure} 
+\paragraph{Better Eating}When Sophie is getting up for lunch, which she usually takes at Pedros Pizza, PAL suggests she might eat a healthy meal at the salad bar next door and presents food and positive reviews from Google Business\FootnoteLink{Google Business}{https://www.google.de/intl/de/business/}. Sophie likes pizza but the fact that the salad bar is really near, the low prices and the very good reviews convince her to try it. After the meal PAL congratulates Sophie to her choice via a notification. Sophie is surprised by the feedback, because she did not tell PAL that she went there, but then she notices that the salad bar is now a new place on her map.
+\paragraph{Personalized Suggestions} By analysing Sophies university classes PAL notices that she likes literature and suggests a literature hike near her as weekend activity. PAL provides the possibility to sign into the hike with only one click. 
+\paragraph{Regular Training} On Tuesday morning PAL gives some instructions what she is going to need for the Yoga the next day. She has almost everything, but lacks a Yoga mat. PAL quickly checks the surrounding shops and informs Sophie, that only 400 steps away there is a shop that sells those. Sophie is reluctant at first, but she decides to give the it a try and follows PALs directions.\\%
+On Wednesday Sophie lets PAL choose a beginner Yoga lesson for her that she can follow on her smartphone or computer. After the training PAL praises Sophie for doing a great job and that he will schedule the next lesson for her next Wednesday at the same time. She happily agrees.
+\paragraph{Maintenance} After some weeks Sophie has adopted some of the behaviours that PAL suggested into her weekly routine. She regularly gets off the bus early and does the stretching, whenever she has time for it. As Sophie becomes more fit her ability rises and PAL sometimes suggests more challenging behaviours like going for a short run or biking to the uni. The always evolving set of suggestions keep Sophie entertained. She notices how her body changes. As PAL notices that Sophie developed the habit of getting off the bus early it stops reminding her about it, but still provides the same rewards. This raises Sophies self-efficacy to keep on doing the behaviour on her own, even when the phone is not there. At some point Spohies behaviour change stagnates at a more healthy level than in the beginning. 
+\paragraph{Conclusion} When Sophie downloaded the app we can assume that she was already in the action phase of the Transtheoretical model (see \autoref{TTM}). This means that she is highly motivated to change and open for new behaviour. PAL 9000 supports Sophie by easing her into the change by first assessing her behaviour and then nudging her towards a healthy lifestyle, rewarding her for reaching realistic goals and using persuasive methods to promote activity and a healthy diet. \\
+PAL 9000 is a highly hypothetical app in an ideal scenario, that envisions how mHealth applications could evolve if strong models and rich sensor data are used to monitor and guide users. 
+
+
+\begin{figure}
+  \centering
+  \includegraphics[width=5cm]{bilder/buscrop}
+  \caption{Example intervention to include a walk into the daily commute. Notification on smartphone screen.\label{buscrop}}
+\end{figure}
+
+
+\begin{table}
+  \begin{tabularx}{\textwidth}{lX}
+    \toprule
+    data & approximate frequency \\ \midrule
+    3D-acceleration & 50 Hz \\
+    3D-rotation & 50 Hz \\
+    3D-magnetic field & 50 Hz \\
+    ambient light & 5 Hz \\
+    proximity & 5 Hz \\
+    barometric pressure & 5 Hz \\
+    ambient sound level & 0.2 Hz \\
+    location & 0.2 Hz \\
+    screen state & 0.2 Hz \\
+    recognized activity & 0.2 HZ \\
+    step count & 0.2 Hz \\
+    wifi state & 0.2 Hz \\
+    weather & every 30 minutes \\
+  \end{tabularx}
+  \caption{\label{sensortable}Typical Android data sampling frequencies}
+\end{table}
+
